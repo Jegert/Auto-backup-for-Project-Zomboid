@@ -31,6 +31,6 @@ exit
 •Open up your steam library and right click Project Zomboid -> Properties  
 •In launch options type the path of the BAT file and %command% to the end:
 ```
-"C:\Program Files (x86)\Steam\steamapps\common\ProjectZomboid\RUN with backup.bat" %command%
+"C:\Program Files (x86)\Steam\steamapps\common\ProjectZomboid\(YOUR BAT FILE NAME).bat" %command%
 ```
 • When you open your game up from steam it will automatically open up the backup program aswell.  
