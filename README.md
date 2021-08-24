@@ -18,7 +18,7 @@ There is a compiled version in the Release tab, I uploaded the files aswell, so 
 
 **How to automatically open it when you open up the game:**  
 
-•Drag the jar and the BAT file into the game folder  
+•Drag the jar into the game folder  
 •Create a BAT file and edit the file locations if necessary (.jar and .exe)  
 ```
 @echo off 
