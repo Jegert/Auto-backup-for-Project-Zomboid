@@ -187,11 +187,12 @@ public class Controller {
             automatic_box.setDisable(true);
             system_info.setText("Program started.");
 
-            //set backup folder as save folder, when left to default
+            //set backup folder as save root folder, when left to default
             if (backup_path.equals("No folder selected")) {
-                setConfig("backup_path", save_path);
-                backup_txt.setText(backup_path);
-                backup_path = save_path;
+                List<String> save_root = Arrays.asList(save_path.split("\\\\")).subList(0 , save_path.split("\\\\").length - 1);
+                setConfig("backup_path", String.join("\\", save_root));
+                backup_txt.setText(String.join("\\", save_root));
+                backup_path = String.join("\\", save_root);
             }
 
             if (interval > 0) {

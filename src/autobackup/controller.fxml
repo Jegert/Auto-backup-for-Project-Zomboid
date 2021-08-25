@@ -54,7 +54,7 @@
           <Button fx:id="save_btn" maxWidth="70.0" minWidth="45.0" mnemonicParsing="false" onMouseClicked="#chooseSave" prefHeight="25.0" text="Browse" />
       </buttons>
     </ButtonBar>
-    <Text layoutX="77.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" text="(will default to the save folder)">
+    <Text layoutX="65.0" layoutY="117.0" strokeType="OUTSIDE" strokeWidth="0.0" text="(will default to the save root folder)">
       <font>
          <Font size="11.0" />
       </font>
