@@ -54,29 +54,10 @@ public class Controller {
 
     @FXML
     public void initialize() {
-        //creates a config file if created yet
-        if (!new File(program_dir + "\\backup.properties").exists()) {
-            try {
-                new File(program_dir + "\\backup.properties").createNewFile();
-
-                //gives parameters to config file
-                Properties prop = new Properties();
-
-                InputStream is = new FileInputStream(program_dir + "\\backup.properties");
-                prop.load(is);
-                is.close();
-                OutputStream os = new FileOutputStream(program_dir + "\\backup.properties");
-                prop.setProperty("save_path", "No folder selected");
-                prop.setProperty("backup_path", "No folder selected");
-                prop.setProperty("interval", "0");
-                prop.setProperty("auto", "false");
-                prop.store(os, null);
-                os.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
+        if (new File(program_dir + "\\backup.properties").exists()) {
             getProperties();
+        } else { //creates a config file if created yet
+            generateProperties();
         }
 
         stop_btn.setDisable(true);
@@ -86,6 +67,24 @@ public class Controller {
         min_interval.setText(String.valueOf(interval));
         if (start_auto) {
             startProgram();
+        }
+    }
+
+    private void generateProperties() {
+        try {
+            new File(program_dir + "\\backup.properties").createNewFile();
+            //gives parameters to config file
+            Properties prop = new Properties();
+            OutputStream os = new FileOutputStream(program_dir + "\\backup.properties");
+            prop.setProperty("save_path", "No folder selected");
+            prop.setProperty("backup_path", "No folder selected");
+            prop.setProperty("interval", "0");
+            prop.setProperty("auto", "false");
+            prop.store(os, null);
+            os.close();
+            getProperties();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -99,8 +98,12 @@ public class Controller {
             backup_path = prop.getProperty("backup_path");
             interval = Integer.parseInt(prop.getProperty("interval"));
             start_auto = Boolean.parseBoolean(prop.getProperty("auto"));
+            if (save_path == null || backup_path == null) {
+                generateProperties();
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            //if values invalid will make a new properties file
+            generateProperties();
         }
     }
 
@@ -119,7 +122,6 @@ public class Controller {
             e.printStackTrace();
         }
     }
-
 
     @FXML
     private void chooseSave() {
@@ -155,6 +157,11 @@ public class Controller {
         }
     }
 
+    private boolean validFolder(String folderPath) {
+        File path = new File(folderPath);
+        return path.canWrite();
+    }
+
     @FXML
     private void updateInterval() {
         //accept only numbers in textfield
@@ -177,6 +184,10 @@ public class Controller {
         //won't start if no folder selected
         if (save_path.equals("No folder selected")) {
             system_info.setText("Please select a save folder.");
+        } else if (!validFolder(save_path)) {
+            system_info.setText("Invalid save folder.");
+        } else if (!validFolder(backup_path) && !backup_path.equals("No folder selected")) {
+            system_info.setText("Invalid backup folder.");
         } else {
             //start backup program
             save_btn.setDisable(true);
@@ -189,7 +200,7 @@ public class Controller {
 
             //set backup folder as save root folder, when left to default
             if (backup_path.equals("No folder selected")) {
-                List<String> save_root = Arrays.asList(save_path.split("\\\\")).subList(0 , save_path.split("\\\\").length - 1);
+                List<String> save_root = Arrays.asList(save_path.split("\\\\")).subList(0, save_path.split("\\\\").length - 1);
                 setConfig("backup_path", String.join("\\", save_root));
                 backup_txt.setText(String.join("\\", save_root));
                 backup_path = String.join("\\", save_root);
@@ -252,10 +263,13 @@ public class Controller {
             } catch (Exception e) {
                 system_info.setText("PROBLEM BACKUPING THE SAVE");
             }
+            if (interval == 0) {
+                stopProgram();
+            }
             system_info.setText("Backup completed!");
             save_timer = 0;
-        } else if (save_timer % 60 == 0 && interval != 0) {
-            system_info.setText("Next backup in: " + String.valueOf(interval - save_timer / 60) + " minutes.");
+        } else if (save_timer % 60 == 0) {
+            system_info.setText("Next backup in: " + (interval - save_timer / 60) + " minutes.");
         }
     }
 }
